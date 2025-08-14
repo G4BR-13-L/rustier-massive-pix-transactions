@@ -1,7 +1,8 @@
-use actix_web::{web, HttpResponse, Error};
+use actix_web::{web, Error, HttpResponse};
 use chrono::Utc;
 use uuid::Uuid;
 
+use crate::application::dto::customer_dto::{CreateCustomerRequest, CustomerResponse};
 use crate::domain::customer;
 use crate::infraestructure::error::MyError;
 use crate::{
@@ -22,8 +23,22 @@ pub async fn list_customers() -> HttpResponse {
     }])
 }
 
-pub async fn create_customer(item: web::Json<Customer>) -> HttpResponse {
-    HttpResponse::Created().json(item.into_inner())
+// pub async fn create_customer(item: web::Json<Customer>) -> HttpResponse {
+//     HttpResponse::Created().json(item.into_inner())
+// }
+
+pub async fn create_customer(
+    customer: web::Json<CreateCustomerRequest>,
+    db_pool: web::Data<Pool>,
+) -> Result<HttpResponse, Error> {
+    let customer_info: CreateCustomerRequest = customer.into_inner();
+
+    let client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
+
+    println!("Inserindo agroa");
+
+    let new_customer = customer_repo::create_customer(&client, customer_info).await?;
+    Ok(HttpResponse::Ok().json(CustomerResponse::from(new_customer)))
 }
 
 pub async fn get_customer_by_id(path: web::Path<Uuid>) -> HttpResponse {

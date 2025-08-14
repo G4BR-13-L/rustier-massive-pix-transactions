@@ -10,6 +10,7 @@ confik = "0.14.0"
 deadpool-postgres = {version = "0.14.1", features = ["serde"]}
 derive_more = "2.0.1"
 dotenvy = "0.15.7"
+env_logger = "0.11.8"
 postgres-types = { version = "0.2.9", features = [
     "with-chrono-0_4",
     "with-uuid-1",

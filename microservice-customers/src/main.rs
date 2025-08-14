@@ -15,6 +15,13 @@ use crate::configuration::db::ExampleConfig;
 pub mod configuration;
 pub mod utils;
 
+mod application {
+    pub mod pix_service;
+    pub mod customer_service;
+    pub mod account_service;
+    pub mod dto;
+}
+
 mod domain {
     pub mod enums;
     pub mod customer;
@@ -38,6 +45,8 @@ mod infraestructure {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
         
+    env_logger::init();
+
     dotenv().ok();
 
     let client = expect_or_exit(connect_to_db().await, "Failed to connect to database");
