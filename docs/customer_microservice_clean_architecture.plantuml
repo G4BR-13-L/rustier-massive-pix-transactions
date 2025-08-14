@@ -1,0 +1,75 @@
+@startuml Customers_Service_Components
+skinparam componentStyle rectangle
+skinparam shadowing false
+title Customers Service - Clean Architecture Components
+
+package "Presentation Layer" {
+    [HTTP API (Actix-Web)] as http_api
+    [Routes / Handlers] as handlers
+}
+
+package "Application Layer" {
+    [Customer Service] as customer_service
+    [Account Service] as account_service
+    [Pix Service] as pix_service
+}
+
+package "Domain Layer" {
+    [Customer Entity]
+    [Account Entity]
+    [PixKey Entity]
+    [Enums]
+}
+
+package "Infrastructure Layer" {
+    [Postgres Repository]
+    [DB Connection Pool]
+    [SQL Scripts]
+    [Messaging Producer]
+}
+
+package "Configuration" {
+    [Config Loader]
+    [DB Migrations Runner]
+}
+
+package "Shared" {
+    [Error Handling]
+    [Result Wrapper]
+    [UUID Utilities]
+}
+
+package "External" {
+    database "Postgres DB"
+    [Kafka Broker] as kafka
+}
+
+' ---------- Dependencies ----------
+http_api --> handlers
+handlers --> customer_service
+handlers --> account_service
+handlers --> pix_service
+
+customer_service --> [Customer Entity]
+account_service --> [Account Entity]
+pix_service --> [PixKey Entity]
+
+customer_service --> [Postgres Repository]
+account_service --> [Postgres Repository]
+pix_service --> [Postgres Repository]
+
+[Postgres Repository] --> [DB Connection Pool]
+[DB Connection Pool] --> [Postgres DB]
+
+customer_service --> [Messaging Producer]
+[Messaging Producer] --> kafka
+
+[Config Loader] --> [DB Connection Pool]
+[Config Loader] --> http_api
+[DB Migrations Runner] --> [Postgres DB]
+
+[Error Handling] --> all
+[Result Wrapper] --> all
+[UUID Utilities] --> all
+
+@enduml

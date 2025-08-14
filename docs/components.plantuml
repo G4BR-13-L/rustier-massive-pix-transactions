@@ -1,0 +1,22 @@
+@startuml Componentes_Transfer
+' skinparam componentStyle rectangle
+' skinparam shadowing false
+
+
+title Componentes do Transfer Service
+
+package "Transfer Service" {
+    [HTTP API Layer] --> [Application Layer]
+    [Application Layer] --> [Domain Model]
+    [Application Layer] --> [Message Producer]
+    [Application Layer] --> [Persistence Layer]
+    [Persistence Layer] --> [PostgreSQL Client]
+}
+
+[PostgreSQL Client] --> [Transfers DB Shard 1]
+[PostgreSQL Client] --> [Transfers DB Shard 2]
+[PostgreSQL Client] --> [Transfers DB Shard 3]
+
+[Message Producer] --> [Kafka Topic: transfers]
+
+@enduml

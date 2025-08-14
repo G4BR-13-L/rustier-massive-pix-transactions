@@ -1,0 +1,65 @@
+@startuml Infraestrutura
+skinparam nodeStyle rectangle
+skinparam shadowing false
+
+title Infraestrutura - Pix Microservices
+
+node "Load Balancer: Customer" as lb_cust
+node "Load Balancer: Transfer" as lb_trans
+node "Load Balancer: Ledger" as lb_ledg
+
+cloud "Kafka Cluster" as kafka
+
+node "Customer Service Cluster" {
+    [Customer Instance 1]
+    [Customer Instance 2]
+    [Customer Instance 3]
+}
+
+node "Transfer Service Cluster" {
+    [Transfer Instance 1]
+    [Transfer Instance 2]
+    [Transfer Instance 3]
+}
+
+node "Ledger Service Cluster" {
+    [Ledger Instance 1]
+    [Ledger Instance 2]
+    [Ledger Instance 3]
+}
+
+database "Customers DB" as custdb
+database "Transfers DB 1" as tdb1
+database "Transfers DB 2" as tdb2
+database "Transfers DB 3" as tdb3
+database "Ledger DB 1" as ldb1
+database "Ledger DB 2" as ldb2
+database "Ledger DB 3" as ldb3
+
+lb_cust --> [Customer Instance 1]
+lb_cust --> [Customer Instance 2]
+lb_cust --> [Customer Instance 3]
+[Customer Instance 1] --> custdb
+[Customer Instance 2] --> custdb
+[Customer Instance 3] --> custdb
+
+lb_trans --> [Transfer Instance 1]
+lb_trans --> [Transfer Instance 2]
+lb_trans --> [Transfer Instance 3]
+[Transfer Instance 1] --> tdb1
+[Transfer Instance 2] --> tdb2
+[Transfer Instance 3] --> tdb3
+
+lb_ledg --> [Ledger Instance 1]
+lb_ledg --> [Ledger Instance 2]
+lb_ledg --> [Ledger Instance 3]
+[Ledger Instance 1] --> ldb1
+[Ledger Instance 2] --> ldb2
+[Ledger Instance 3] --> ldb3
+
+[Transfer Instance 1] --> kafka
+[Transfer Instance 2] --> kafka
+[Ledger Instance 1] --> kafka
+[Ledger Instance 2] --> kafka
+
+@enduml

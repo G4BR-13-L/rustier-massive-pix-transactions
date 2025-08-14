@@ -1,0 +1,48 @@
+@startuml Arquitetura
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+title Arquitetura de Microserviços Pix
+
+package "API Gateway / Load Balancer" {
+    [LB Customer]
+    [LB Transfer]
+    [LB Ledger]
+}
+
+package "Mensageria" {
+    [Kafka Broker] as kafka
+}
+
+package "Microservices" {
+    [Customer Service] as cust
+    [Transfer Service] as transf
+    [Ledger Service] as ledg
+}
+
+package "Databases" {
+    [Customers DB] as custdb
+    [Transfers DB 1] as tdb1
+    [Transfers DB 2] as tdb2
+    [Transfers DB 3] as tdb3
+    [Ledger DB 1] as ldb1
+    [Ledger DB 2] as ldb2
+    [Ledger DB 3] as ldb3
+}
+
+[LB Customer] --> cust
+[LB Transfer] --> transf
+[LB Ledger] --> ledg
+
+cust --> custdb
+transf --> tdb1
+transf --> tdb2
+transf --> tdb3
+ledg --> ldb1
+ledg --> ldb2
+ledg --> ldb3
+
+transf --> kafka
+ledg --> kafka
+@enduml
