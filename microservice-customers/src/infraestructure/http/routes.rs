@@ -11,7 +11,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
         // Customer routes
         .service(
             web::scope("/customers")
-                .route("", web::get().to(customer_handler::list_customers))
+                .route("", web::get().to(customer_handler::get_customers))
                 .route("", web::post().to(customer_handler::create_customer))
                 .route("/{id}", web::get().to(customer_handler::get_customer_by_id))
         )

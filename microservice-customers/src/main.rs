@@ -1,11 +1,16 @@
 
 use configuration::db::connect_to_db;
 use configuration::migrations::{check_table_exists, create_migration_table, run_migrations};
+use confik::{Configuration, EnvSource};
+use tokio_postgres::NoTls;
 use std::fs;
 use std::path::Path;
+use dotenvy::dotenv;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use infraestructure::http::routes::config;
+use infraestructure::http::routes::config as routes_config;
+
+use crate::configuration::db::ExampleConfig;
 
 pub mod configuration;
 pub mod utils;
@@ -22,25 +27,19 @@ mod infraestructure {
         pub mod handlers;
         pub mod routes;
     }
-}
-
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
+    pub mod db {
+        pub mod customer_repo;
+        pub mod account_repo;
+        pub mod pix_key_repo;
+    }
+    pub mod error;
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
         
+    dotenv().ok();
+
     let client = expect_or_exit(connect_to_db().await, "Failed to connect to database");
     
     if !expect_or_exit(check_table_exists(&client).await, "Failed to check table") {
@@ -52,13 +51,30 @@ async fn main() -> std::io::Result<()> {
 
     expect_or_exit(run_migrations(&client).await, "Error in migrations");
 
-    HttpServer::new(|| {
-        App::new()
-            .configure(config)
+    let config = ExampleConfig::builder()
+        .override_with(EnvSource::new())
+        .try_build()
+        .unwrap();
+
+    let pool = config.pg.create_pool(None, NoTls).unwrap();
+
+    let server = HttpServer::new(move || {
+        App::new().app_data(web::Data::new(pool.clone()))
+        .configure(routes_config)
     })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    .bind(config.server_addr.clone())?
+    .run();
+    println!("Server running at http://{}/", config.server_addr);
+
+    server.await
+
+    // HttpServer::new(|| {
+    //     App::new()
+    //         .configure(routes_config)
+    // })
+    // .bind(("127.0.0.1", 8080))?
+    // .run()
+    // .await
 }
 
 fn expect_or_exit<T, E: std::fmt::Display>(result: Result<T, E>, msg: &str) -> T {
