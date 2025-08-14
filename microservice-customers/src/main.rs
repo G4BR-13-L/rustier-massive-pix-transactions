@@ -1,7 +1,9 @@
 
+use actix_web::middleware::Logger;
 use configuration::db::connect_to_db;
 use configuration::migrations::{check_table_exists, create_migration_table, run_migrations};
 use confik::{Configuration, EnvSource};
+use env_logger::Env;
 use tokio_postgres::NoTls;
 use std::fs;
 use std::path::Path;
@@ -13,7 +15,7 @@ use infraestructure::http::routes::config as routes_config;
 use crate::configuration::db::ExampleConfig;
 
 pub mod configuration;
-pub mod utils;
+pub mod shared;
 
 mod application {
     pub mod pix_service;
@@ -45,7 +47,7 @@ mod infraestructure {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
         
-    env_logger::init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
     dotenv().ok();
 
@@ -68,7 +70,9 @@ async fn main() -> std::io::Result<()> {
     let pool = config.pg.create_pool(None, NoTls).unwrap();
 
     let server = HttpServer::new(move || {
-        App::new().app_data(web::Data::new(pool.clone()))
+        App::new()
+        .wrap(Logger::default())
+        .app_data(web::Data::new(pool.clone()))
         .configure(routes_config)
     })
     .bind(config.server_addr.clone())?

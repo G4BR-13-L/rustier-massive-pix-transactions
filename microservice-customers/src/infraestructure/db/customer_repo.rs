@@ -4,7 +4,7 @@ use tokio_postgres::error::SqlState;
 
 use crate::application::dto::customer_dto::CreateCustomerRequest;
 use crate::domain::customer::Customer;
-use crate::infraestructure::error::{ApiError, MyError};
+use crate::infraestructure::error::{map_db_error, ApiError, InternalError, MyError};
 
 pub async fn get_customers(client: &Client) -> Result<Vec<Customer>, MyError> {
     let stmt = include_str!("../../../sql/get_customers.sql");
@@ -23,55 +23,18 @@ pub async fn get_customers(client: &Client) -> Result<Vec<Customer>, MyError> {
 
 pub async fn create_customer(
     client: &Client,
-    customer_create_request: CreateCustomerRequest,
+    req: CreateCustomerRequest,
 ) -> Result<Customer, MyError> {
     let raw_sql = include_str!("../../../sql/create_customer.sql");
     let sql = raw_sql.replace("$table_fields", &Customer::sql_table_fields());
+    let stmt = client.prepare(&sql).await.map_err(map_db_error)?;
 
-    let stmt = client.prepare(&sql).await.map_err(MyError::from)?;
+    let rows = client
+        .query(&stmt, &[&req.full_name, &req.email, &req.cpf])
+        .await
+        .map_err(map_db_error)?;
 
-    println!("SQL: {}", sql);
-    println!(
-        "Params: {:?} {:?} {:?}",
-        customer_create_request.full_name,
-        customer_create_request.email,
-        customer_create_request.cpf
-    );
-
-    let result = client
-        .query(
-            &stmt,
-            &[
-                &customer_create_request.full_name,
-                &customer_create_request.email,
-                &customer_create_request.cpf,
-            ],
-        )
-        .await;
-
-
-        
-    match result {
-        Ok(rows) => {
-            let row = rows.first().ok_or(MyError::NotFound)?;
-            Ok(Customer::from_row_ref(row)?)
-        }
-        Err(e) => {
-            if let Some(db_err) = e.as_db_error() {
-                match db_err.code() {
-                    &SqlState::UNIQUE_VIOLATION => {
-                        return Err(MyError::ApiError(
-                            ApiError {
-                                msg: format!(
-                            "Email ou CPF já existe: {}",
-                            db_err.detail().unwrap_or("sem detalhe")
-                        )
-                    }));
-                    }
-                    _ => {}
-                }
-            }
-            Err(MyError::from(e))
-        }
-    }
+    let row = rows.first().ok_or(MyError::Internal(InternalError { msg: "Nenhum registro retornado".into() }))?;
+    Customer::from_row_ref(row).map_err(|e| MyError::Internal(InternalError { msg: e.to_string() }))
 }
+

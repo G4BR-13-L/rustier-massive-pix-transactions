@@ -1,4 +1,4 @@
-use crate::utils::sha3::sha3_256_of_file;
+use crate::shared::sha3::sha3_256_of_file;
 use std::fs;
 use tokio_postgres::{Client, NoTls};
 
@@ -35,7 +35,7 @@ pub async fn create_migration_table(client: &Client) -> Result<(), tokio_postgre
 pub async fn run_migrations(client: &Client) -> Result<(), Box<dyn std::error::Error>> {
     let migration_files = fs::read_dir("./migrations")?;
 
-    let mut entries: Vec<_> = migration_files.collect::<Result<_, _>>()?;
+    let entries: Vec<_> = migration_files.collect::<Result<_, _>>()?;
     // entries.reverse();
 
     for entry in entries {
