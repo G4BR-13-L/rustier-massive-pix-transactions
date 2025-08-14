@@ -1,0 +1,122 @@
+version: "3.8"
+
+networks:
+  banking_net:
+    driver: bridge
+
+volumes:
+  customers_pg_data:
+  transfers_pg1_data:
+  transfers_pg2_data:
+  transfers_pg3_data:
+  ledger_pg1_data:
+  ledger_pg2_data:
+  ledger_pg3_data:
+
+services:
+  # ------------------------
+  # Customers Service Database
+  # ------------------------
+  customers_postgres:
+    image: postgres:17
+    container_name: customers_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: customers
+    ports:
+      - "5451:5432"
+    volumes:
+      - customers_pg_data:/var/lib/postgresql/data
+    networks:
+      - banking_net
+
+  # ------------------------
+  # Transfers DB Shards
+  # ------------------------
+  transfers_postgres_1:
+    image: postgres:17
+    container_name: transfers_postgres_1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: transfers
+    ports:
+      - "5461:5432"
+    volumes:
+      - transfers_pg1_data:/var/lib/postgresql/data
+    networks:
+      - banking_net
+
+  transfers_postgres_2:
+    image: postgres:17
+    container_name: transfers_postgres_2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: transfers
+    ports:
+      - "5462:5432"
+    volumes:
+      - transfers_pg2_data:/var/lib/postgresql/data
+    networks:
+      - banking_net
+
+  transfers_postgres_3:
+    image: postgres:17
+    container_name: transfers_postgres_3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: transfers
+    ports:
+      - "5463:5432"
+    volumes:
+      - transfers_pg3_data:/var/lib/postgresql/data
+    networks:
+      - banking_net
+
+  # ------------------------
+  # Ledger DB Shards
+  # ------------------------
+  ledger_postgres_1:
+    image: postgres:17
+    container_name: ledger_postgres_1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ledger
+    ports:
+      - "5471:5432"
+    volumes:
+      - ledger_pg1_data:/var/lib/postgresql/data
+    networks:
+      - banking_net
+
+  ledger_postgres_2:
+    image: postgres:17
+    container_name: ledger_postgres_2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ledger
+    ports:
+      - "5472:5432"
+    volumes:
+      - ledger_pg2_data:/var/lib/postgresql/data
+    networks:
+      - banking_net
+
+  ledger_postgres_3:
+    image: postgres:17
+    container_name: ledger_postgres_3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ledger
+    ports:
+      - "5473:5432"
+    volumes:
+      - ledger_pg3_data:/var/lib/postgresql/data
+    networks:
+      - banking_net
