@@ -1,5 +1,4 @@
 use crate::utils::sha3::sha3_256_of_file;
-use rocket::{get, launch, routes};
 use std::fs;
 use tokio_postgres::{Client, NoTls};
 
