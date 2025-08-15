@@ -2222,6 +2222,7 @@ dependencies = [
  "serde_json",
  "sha3",
  "sqlx",
+ "thiserror 2.0.14",
  "tokio",
  "tokio-pg-mapper",
  "tokio-pg-mapper-derive",

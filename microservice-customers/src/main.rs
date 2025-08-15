@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpServer};
 use configuration::db::connect_to_db;
@@ -8,6 +10,7 @@ use env_logger::Env;
 use infraestructure::http::routes::config as routes_config;
 use tokio_postgres::NoTls;
 
+use crate::application::jwt_service::JwtService;
 use crate::configuration::db::ExampleConfig;
 
 pub mod configuration;
@@ -18,6 +21,7 @@ mod application {
     pub mod customer_service;
     pub mod dto;
     pub mod pix_service;
+    pub mod jwt_service;
 }
 
 mod domain {
@@ -68,10 +72,12 @@ async fn main() -> std::io::Result<()> {
 
     let pool = config.pg.create_pool(None, NoTls).unwrap();
 
+    let jwt_service = Arc::new(JwtService::new());
 
     let server = HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())
+            .app_data(web::Data::new(Arc::clone(&jwt_service)))
             .app_data(web::Data::new(pool.clone()))
             .configure(routes_config)
     })
