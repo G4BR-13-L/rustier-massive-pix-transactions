@@ -1,6 +1,5 @@
 use tokio_postgres::{Client, NoTls};
 use confik::Configuration;
-use serde::Deserialize;
 
 pub async fn connect_to_db() -> Result<Client, tokio_postgres::Error> {
     let (client, connection) = tokio_postgres::Config::new()

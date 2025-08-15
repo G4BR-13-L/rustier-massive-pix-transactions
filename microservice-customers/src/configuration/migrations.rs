@@ -1,6 +1,6 @@
 use crate::shared::sha3::sha3_256_of_file;
 use std::fs;
-use tokio_postgres::{Client, NoTls};
+use tokio_postgres::{Client};
 
 pub async fn check_table_exists(client: &Client) -> Result<bool, tokio_postgres::Error> {
     let rows = client

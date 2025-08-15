@@ -5,11 +5,8 @@ use configuration::migrations::{check_table_exists, create_migration_table, run_
 use confik::{Configuration, EnvSource};
 use env_logger::Env;
 use tokio_postgres::NoTls;
-use std::fs;
-use std::path::Path;
 use dotenvy::dotenv;
-
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpServer};
 use infraestructure::http::routes::config as routes_config;
 
 use crate::configuration::db::ExampleConfig;

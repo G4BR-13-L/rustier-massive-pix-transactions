@@ -1,10 +1,9 @@
-use deadpool_postgres::Client;
+use deadpool_postgres::{Client, Transaction};
 use tokio_pg_mapper::FromTokioPostgresRow;
-use tokio_postgres::error::SqlState;
 
 use crate::application::dto::customer_dto::CreateCustomerRequest;
 use crate::domain::customer::Customer;
-use crate::infraestructure::error::{map_db_error, ApiError, InternalError, MyError};
+use crate::infraestructure::error::{map_db_error, InternalError, MyError};
 
 pub async fn get_customers(client: &Client) -> Result<Vec<Customer>, MyError> {
     let stmt = include_str!("../../../sql/get_customers.sql");
@@ -22,14 +21,14 @@ pub async fn get_customers(client: &Client) -> Result<Vec<Customer>, MyError> {
 }
 
 pub async fn create_customer(
-    client: &Client,
+    client_or_tx: &Transaction<'_>,
     req: CreateCustomerRequest,
-) -> Result<Customer, MyError> {
+) -> Result<Customer, MyError>{
     let raw_sql = include_str!("../../../sql/create_customer.sql");
     let sql = raw_sql.replace("$table_fields", &Customer::sql_table_fields());
-    let stmt = client.prepare(&sql).await.map_err(map_db_error)?;
+    let stmt = client_or_tx.prepare(&sql).await.map_err(map_db_error)?;
 
-    let rows = client
+    let rows = client_or_tx
         .query(&stmt, &[&req.full_name, &req.email, &req.cpf])
         .await
         .map_err(map_db_error)?;

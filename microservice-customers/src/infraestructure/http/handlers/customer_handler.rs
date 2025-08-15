@@ -4,11 +4,9 @@ use uuid::Uuid;
 
 use crate::application::customer_service;
 use crate::application::dto::customer_dto::{CreateCustomerRequest, CustomerResponse};
-use crate::domain::customer;
 use crate::infraestructure::error::MyError;
 use crate::{
     domain::customer::Customer, infraestructure::db::customer_repo,
-    infraestructure::http::handlers::customer_handler,
 };
 use deadpool_postgres::{Client, Pool};
 
@@ -30,10 +28,10 @@ pub async fn create_customer(
 ) -> Result<HttpResponse, Error> {
     let customer_info: CreateCustomerRequest = customer.into_inner();
 
-    let client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
+    let mut client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
 
 
-    match customer_service::create_customer(&client, customer_info).await {
+    match customer_service::create_customer(&mut client, customer_info).await {
         Ok(new_customer) => {
             log::info!("Customer created successfully: {:?}", new_customer.id);
             Ok(HttpResponse::Created()
@@ -42,7 +40,7 @@ pub async fn create_customer(
         },
         Err(e) => {
             log::error!("Error creating customer: {:?}", e);
-            Err(e.into()) // Converte automaticamente para actix_web::Error
+            Err(e.into())
         }
     }
 }
