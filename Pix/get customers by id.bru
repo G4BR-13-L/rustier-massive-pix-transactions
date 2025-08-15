@@ -1,0 +1,15 @@
+meta {
+  name: get customers by id
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8080/customers/aa2d1d1a-c959-4b8a-b7e9-cca8ed9abcb8
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

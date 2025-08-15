@@ -1,0 +1,15 @@
+meta {
+  name: get account by customer id
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8080/accounts/customer/b409a5b5-ceb0-4e8f-92b5-6d9cee31db23
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

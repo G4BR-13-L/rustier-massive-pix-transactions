@@ -33,7 +33,7 @@ pub async fn create_customer(
 
     let new_customer = customer_repo::create_customer(&transaction, create_customer_request).await?;
 
-    // let new_account = account_service::create_account(&transaction, &new_customer.id).await?;
+    let new_account = account_service::create_account(&transaction, &new_customer.id).await?;
 
     transaction.commit().await?;
     Ok(new_customer)
