@@ -5,9 +5,17 @@ meta {
 }
 
 get {
-  url: http://localhost:8080/customers
+  url: http://localhost:8080/customers?Authorization=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiNDA5YTViNS1jZWIwLTRlOGYtOTJiNS02ZDljZWUzMWRiMjMiLCJleHAiOjE3NTUyOTE3Njd9.ITCy0yS3fZ7e3JrnKcfVM4zoM3x0_zNtYQT8JRBIz-0
   body: none
   auth: inherit
+}
+
+params:query {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiNDA5YTViNS1jZWIwLTRlOGYtOTJiNS02ZDljZWUzMWRiMjMiLCJleHAiOjE3NTUyOTE3Njd9.ITCy0yS3fZ7e3JrnKcfVM4zoM3x0_zNtYQT8JRBIz-0
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiNDA5YTViNS1jZWIwLTRlOGYtOTJiNS02ZDljZWUzMWRiMjMiLCJleHAiOjE3NTUyOTE3Njd9.ITCy0yS3fZ7e3JrnKcfVM4zoM3x0_zNtYQT8JRBIz-0
 }
 
 settings {

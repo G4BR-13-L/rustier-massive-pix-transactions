@@ -1,0 +1,21 @@
+meta {
+  name: Generete Auth Token
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8081/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "customer_id":"b409a5b5-ceb0-4e8f-92b5-6d9cee31db23"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

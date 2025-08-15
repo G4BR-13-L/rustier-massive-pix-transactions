@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 actix-web = "4.11.0"
+actix-web-httpauth = "0.8.2"
 bytes = "1.10.1"
 chrono = { version = "0.4.39", features = ["serde"] }
 confik = "0.14.0"
@@ -12,6 +13,8 @@ deadpool-postgres = {version = "0.14.1", features = ["serde"]}
 derive_more = "2.0.1"
 dotenvy = "0.15.7"
 env_logger = "0.11.8"
+futures-util = "0.3.31"
+jsonwebtoken = "9.3.1"
 log = "0.4.27"
 postgres-derive = "0.4.6"
 postgres-types = { version = "0.2.9", features = ["derive", "with-chrono-0_4", "with-uuid-1"] }
