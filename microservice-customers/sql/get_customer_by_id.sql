@@ -1,0 +1,1 @@
+SELECT $table_fields FROM public.customers WHERE id = $1 LIMIT 1;

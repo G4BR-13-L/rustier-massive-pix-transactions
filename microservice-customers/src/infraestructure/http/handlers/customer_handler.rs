@@ -5,9 +5,7 @@ use uuid::Uuid;
 use crate::application::customer_service;
 use crate::application::dto::customer_dto::{CreateCustomerRequest, CustomerResponse};
 use crate::infraestructure::error::MyError;
-use crate::{
-    domain::customer::Customer, infraestructure::db::customer_repo,
-};
+use crate::{domain::customer::Customer, infraestructure::db::customer_repo};
 use deadpool_postgres::{Client, Pool};
 
 pub async fn list_customers() -> HttpResponse {
@@ -30,14 +28,13 @@ pub async fn create_customer(
 
     let mut client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
 
-
     match customer_service::create_customer(&mut client, customer_info).await {
         Ok(new_customer) => {
             log::info!("Customer created successfully: {:?}", new_customer.id);
             Ok(HttpResponse::Created()
                 .append_header(("Location", format!("/customers/{}", new_customer.id)))
                 .json(CustomerResponse::from(new_customer)))
-        },
+        }
         Err(e) => {
             log::error!("Error creating customer: {:?}", e);
             Err(e.into())
@@ -45,18 +42,14 @@ pub async fn create_customer(
     }
 }
 
-pub async fn get_customer_by_id(path: web::Path<Uuid>) -> HttpResponse {
+pub async fn get_customer_by_id(db_pool: web::Data<Pool>, path: web::Path<Uuid>) -> Result<HttpResponse, Error> {
     let id = path.into_inner();
-    let customer = Customer {
-        id,
-        full_name: "Maria Souza".into(),
-        email: "maria@example.com".into(),
-        cpf: "98765432100".into(),
-        is_active: true,
-        created_at: Utc::now(),
-        updated_at: Utc::now(),
-    };
-    HttpResponse::Ok().json(customer)
+
+    let client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
+
+    let customer = customer_service::get_customer_by_id(&client, id).await?;
+
+    Ok(HttpResponse::Ok().json(customer))
 }
 
 pub async fn get_customers(db_pool: web::Data<Pool>) -> Result<HttpResponse, Error> {

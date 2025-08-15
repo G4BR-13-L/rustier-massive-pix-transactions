@@ -1,9 +1,7 @@
-use deadpool_postgres::{Client, Transaction};
+use deadpool_postgres::{Transaction};
 use uuid::Uuid;
 
 use crate::{application::dto::account_dto::AccountCreateRequest, domain::{account::Account, enums::AccountType}, infraestructure::{db::account_repo, error::MyError}};
-
-
 
 pub async fn create_account(
     client_or_tx: &Transaction<'_>,

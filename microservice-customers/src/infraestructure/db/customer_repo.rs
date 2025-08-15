@@ -1,5 +1,6 @@
 use deadpool_postgres::{Client, Transaction};
 use tokio_pg_mapper::FromTokioPostgresRow;
+use uuid::Uuid;
 
 use crate::application::dto::customer_dto::CreateCustomerRequest;
 use crate::domain::customer::Customer;
@@ -35,5 +36,24 @@ pub async fn create_customer(
 
     let row = rows.first().ok_or(MyError::Internal(InternalError { msg: "Nenhum registro retornado".into() }))?;
     Customer::from_row_ref(row).map_err(|e| MyError::Internal(InternalError { msg: e.to_string() }))
+}
+
+pub async fn get_customer_by_id(client: &Client, id: Uuid) -> Result<Customer, MyError> {
+
+    let stmt = include_str!("../../../sql/get_customer_by_id.sql");
+    let stmt = stmt.replace("$table_fields", &Customer::sql_table_fields());
+    let stmt = client.prepare(&stmt).await.unwrap();
+
+    let row = client
+        .query(&stmt, &[&id])
+        .await?
+        .into_iter()
+        .next()
+        .ok_or(MyError::Internal(InternalError { msg: "No record returned".into() }))?;
+
+    let customer = Customer::from_row_ref(&row)
+        .map_err(|e| MyError::Internal(InternalError { msg: e.to_string() }))?;
+    
+    Ok(customer)
 }
 
