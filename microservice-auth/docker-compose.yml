@@ -1,0 +1,15 @@
+
+
+version: '3.8'
+
+services:
+  api:
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@localhost:5451/customers
+      - JWT_SECRET=uma_chave_super_secreta_que_ninguem_sabe
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+

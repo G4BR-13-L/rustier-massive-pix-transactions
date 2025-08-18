@@ -11,6 +11,25 @@ env_logger = "0.11.8"
 jsonwebtoken = "9.3.1"
 log = "0.4.27"
 serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.142"
-sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio", "tls-native-tls"] }
+sqlx = { version = "0.8.6", features = [
+    "postgres",
+    "runtime-tokio-rustls",
+    "runtime-tokio",
+    "tls-rustls",
+]}
+tokio = "1.47.1"
 uuid = { version = "1.18.0", features = ["serde", "v4"] }
+
+[profile.dev]
+incremental = true
+opt-level = 1     # compila mais rápido, executa quase tão rápido
+
+[profile.release]
+opt-level = "z"        # otimiza para tamanho
+lto = true             # link-time optimization
+codegen-units = 1      # menos paralelismo mas melhor otimização
+strip = true           # remove símbolos de debug
+panic = "abort"        # evita incluir unwinding
+incremental = true
+
+

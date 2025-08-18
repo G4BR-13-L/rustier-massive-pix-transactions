@@ -120,3 +120,21 @@ services:
       - ledger_pg3_data:/var/lib/postgresql/data
     networks:
       - banking_net
+
+
+  # ------------------------
+  # Microservices
+  # ------------------------
+  
+  microservice_auth:
+    container_name: microservice_auth
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@customers_postgres:5432/customers
+      - JWT_SECRET=uma_chave_super_secreta_que_ninguem_sabe
+    build:
+      context: ../microservice-auth/
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - banking_net

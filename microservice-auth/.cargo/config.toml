@@ -1,0 +1,4 @@
+[build]
+jobs = 4          # limita núcleos usados
+rustflags = ["-C", "link-arg=-Wl,--no-keep-memory"]
+# rustc-wrapper = "sccache"
