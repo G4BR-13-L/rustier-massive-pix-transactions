@@ -1,5 +1,5 @@
 [package]
-name = "microservice_customers"
+name = "microservice-customers"
 version = "0.1.0"
 edition = "2021"
 
@@ -27,9 +27,9 @@ serde = { version = "1.0.216", features = ["derive"] }
 serde_json = "1.0.142"
 sha3 = "0.10.8"
 sqlx = { version = "0.8.2", features = [
-    "runtime-tokio-native-tls",
     "postgres",
     "rust_decimal",
+    "tls-rustls",
 ] }
 thiserror = "2.0.14"
 tokio = { version = "1.42.0", features = ["full"] }

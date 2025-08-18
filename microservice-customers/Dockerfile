@@ -44,7 +44,7 @@ RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path r
 COPY . .
 
 # Compila apenas o binário final
-RUN cargo build --release --target x86_64-unknown-linux-musl --bin microservice-auth
+RUN cargo build --release --target x86_64-unknown-linux-musl --bin microservice-customers
 
 # =========================
 # Etapa 3 — Runtime minimal
@@ -54,10 +54,10 @@ FROM scratch AS runtime
 WORKDIR /app
 
 # Copia o binário estático final
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/microservice-auth .
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/microservice-customers .
 
-EXPOSE 8081
+EXPOSE 8080
 ENV RUST_LOG=info
 
-ENTRYPOINT ["/app/microservice-auth"]
+ENTRYPOINT ["/app/microservice-customers"]
 
