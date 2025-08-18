@@ -1,5 +1,5 @@
 [package]
-name = "rust_simple_rest_api"
+name = "microservice_customers"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,7 +9,7 @@ actix-web-httpauth = "0.8.2"
 bytes = "1.10.1"
 chrono = { version = "0.4.39", features = ["serde"] }
 confik = "0.14.0"
-deadpool-postgres = {version = "0.14.1", features = ["serde"]}
+deadpool-postgres = { version = "0.14.1", features = ["serde"] }
 derive_more = "2.0.1"
 dotenvy = "0.15.7"
 env_logger = "0.11.8"
@@ -17,15 +17,19 @@ futures-util = "0.3.31"
 jsonwebtoken = "9.3.1"
 log = "0.4.27"
 postgres-derive = "0.4.6"
-postgres-types = { version = "0.2.9", features = ["derive", "with-chrono-0_4", "with-uuid-1"] }
-rust_decimal = {version = "1.37.2", features = ["db-postgres"]}
+postgres-types = { version = "0.2.9", features = [
+    "derive",
+    "with-chrono-0_4",
+    "with-uuid-1",
+] }
+rust_decimal = { version = "1.37.2", features = ["db-postgres"] }
 serde = { version = "1.0.216", features = ["derive"] }
 serde_json = "1.0.142"
 sha3 = "0.10.8"
 sqlx = { version = "0.8.2", features = [
     "runtime-tokio-native-tls",
     "postgres",
-    "rust_decimal"
+    "rust_decimal",
 ] }
 thiserror = "2.0.14"
 tokio = { version = "1.42.0", features = ["full"] }
@@ -33,3 +37,15 @@ tokio-pg-mapper = "0.2.0"
 tokio-pg-mapper-derive = "0.2.0"
 tokio-postgres = "0.7.12"
 uuid = { version = "1.11.0", features = ["serde", "v4"] }
+
+[profile.dev]
+incremental = true
+opt-level = 1      # compila mais rápido, executa quase tão rápido
+
+[profile.release]
+opt-level = "z"    # otimiza para tamanho
+lto = true         # link-time optimization
+codegen-units = 1  # menos paralelismo mas melhor otimização
+strip = true       # remove símbolos de debug
+panic = "abort"    # evita incluir unwinding
+incremental = true

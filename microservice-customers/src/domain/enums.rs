@@ -21,12 +21,3 @@ impl fmt::Display for AccountType {
         }
     }
 }
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum PixKeyType {
-    CPF,
-    CNPJ,
-    EMAIL,
-    PHONE,
-    EVP,
-}

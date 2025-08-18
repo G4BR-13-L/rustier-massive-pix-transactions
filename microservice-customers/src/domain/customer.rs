@@ -10,6 +10,7 @@ pub struct Customer {
     pub full_name: String,
     pub email: String,
     pub cpf: String,
+    pub phone: Option<String>,
     pub is_active: bool,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,

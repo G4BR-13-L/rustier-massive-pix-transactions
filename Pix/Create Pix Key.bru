@@ -1,0 +1,26 @@
+meta {
+  name: Create Pix Key
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8080/pix-keys
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiNDA5YTViNS1jZWIwLTRlOGYtOTJiNS02ZDljZWUzMWRiMjMiLCJleHAiOjE3NTU1NTgxMjl9.30N7FV0BTaZiNW6py9JSSMU4rSLir34UpPZOO6wkzA8
+}
+
+body:json {
+  {
+    "key_value":"1234",
+    "key_type":"CPF" 
+    }
+}
+
+settings {
+  encodeUrl: true
+}

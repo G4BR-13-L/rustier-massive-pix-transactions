@@ -1,0 +1,19 @@
+meta {
+  name: Create Pix Key copy
+  type: http
+  seq: 9
+}
+
+get {
+  url: http://localhost:8080/pix_keys
+  body: none
+  auth: inherit
+}
+
+headers {
+  ~Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiNDA5YTViNS1jZWIwLTRlOGYtOTJiNS02ZDljZWUzMWRiMjMiLCJleHAiOjE3NTU1NTc4ODF9.H81SbYSeUCGr5ycWezFtzE5tk6CQayPNbJ40Z8EZ1pc
+}
+
+settings {
+  encodeUrl: true
+}
